@@ -1,8 +1,11 @@
 from django.urls import path
 
-from .views import UserCreateView, UserGetView
+from .views import (
+    UserCreateView,
+    UserRetrieveUpdateView,
+)
 
 urlpatterns = [
     path("", UserCreateView.as_view(), name="users-create"),
-    path("me/", UserGetView.as_view(), name="users-get"),
+    path("me/", UserRetrieveUpdateView.as_view(), name="users-get"),
 ]
