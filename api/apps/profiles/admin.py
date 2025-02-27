@@ -1,4 +1,4 @@
-from apps.profiles.models import Education, JobSeekerProfile
+from apps.profiles.models import Education, Experience, JobSeekerProfile
 from django.contrib import admin
 
 
@@ -19,6 +19,24 @@ class EducationAdmin(admin.ModelAdmin):
         "start_date",
         "end_date",
         "is_current",
+    )
+    search_fields = (
+        "profile__user__email",
+        "profile__user__first_name",
+        "profile__user__last_name",
+    )
+    ordering = ("profile__user__email",)
+
+
+@admin.register(Experience)
+class ExperienceAdmin(admin.ModelAdmin):
+    list_display = (
+        "profile",
+        "job_title",
+        "organization",
+        "start_date",
+        "end_date",
+        "currently_working",
     )
     search_fields = (
         "profile__user__email",

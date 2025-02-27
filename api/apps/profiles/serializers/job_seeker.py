@@ -1,18 +1,13 @@
 from datetime import datetime
 
 from apps.profiles.models import JobSeekerProfile
-from drf_spectacular.utils import extend_schema_field
+from apps.profiles.serializers import education, experience
 from rest_framework import serializers
-
-from .education import EducationSerializer
 
 
 class JobSeekerProfileSerializer(serializers.ModelSerializer):
-    education = serializers.SerializerMethodField()
-
-    @extend_schema_field(EducationSerializer(many=True))
-    def get_education(self, obj):
-        return EducationSerializer(obj.education.all(), many=True).data
+    education = education.EducationSerializer(many=True, read_only=True)
+    experience = experience.ExperienceSerializer(many=True, read_only=True)
 
     class Meta:
         model = JobSeekerProfile
@@ -27,6 +22,7 @@ class JobSeekerProfileSerializer(serializers.ModelSerializer):
             "resume",
             "profile_picture",
             "education",
+            "experience",
         ]
         extra_kwargs = {
             "created_at": {"read_only": True},

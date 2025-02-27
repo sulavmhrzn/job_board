@@ -51,3 +51,31 @@ class Education(models.Model):
 
     def __str__(self):
         return f"{self.profile.user.get_full_name()} - {self.degree}"
+
+
+class Experience(models.Model):
+    class JOB_LEVEL(models.TextChoices):
+        ENTRY = "ENTRY", "Entry"
+        MID = "MID", "Mid"
+        SENIOR = "SENIOR", "Senior"
+        TOP = "TOP", "Top"
+
+    profile = models.ForeignKey(
+        JobSeekerProfile, on_delete=models.CASCADE, related_name="experience"
+    )
+    organization = models.CharField(max_length=255)
+    job_title = models.CharField(max_length=255)
+    job_location = models.CharField(max_length=255)
+    job_category = models.CharField(max_length=255)
+    job_level = models.CharField(max_length=255, choices=JOB_LEVEL.choices)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    currently_working = models.BooleanField(default=False)
+    description = models.TextField()
+
+    def __str__(self):
+        return f"{self.job_title} at {self.organization}"
+
+    class Meta:
+        verbose_name_plural = "Experiences"
+        verbose_name = "Experience"

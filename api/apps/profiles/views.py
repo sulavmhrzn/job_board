@@ -1,4 +1,4 @@
-from apps.profiles.models import Education, JobSeekerProfile
+from apps.profiles.models import Education, Experience, JobSeekerProfile
 from apps.utils.permissions import IsJobSeeker
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
@@ -9,12 +9,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .serializers.education import EducationSerializer
-from .serializers.job_seeker import (
-    JobSeekerProfileSerializer,
-)
+from .serializers.experience import ExperienceSerializer
+from .serializers.job_seeker import JobSeekerProfileSerializer
+
+JOB_SEEKER_PROFILE = "Job Seeker Profile"
 
 
-@extend_schema(tags=["Job Seeker Profile"])
+@extend_schema(tags=[JOB_SEEKER_PROFILE])
 class JobSeekerProfileAPIView(generics.GenericAPIView):
     serializer_class = JobSeekerProfileSerializer
     permission_classes = [IsAuthenticated, IsJobSeeker]
@@ -66,7 +67,7 @@ class JobSeekerProfileAPIView(generics.GenericAPIView):
         )
 
 
-@extend_schema(tags=["Job Seeker Profile"])
+@extend_schema(tags=[JOB_SEEKER_PROFILE])
 class EducationAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated, IsJobSeeker]
     serializer_class = EducationSerializer
@@ -117,4 +118,62 @@ class EducationAPIView(generics.GenericAPIView):
         return Response(
             {"message": "Education deleted successfully"},
             status=status.HTTP_204_NO_CONTENT,
+        )
+
+
+@extend_schema(tags=[JOB_SEEKER_PROFILE])
+class ExperienceAPIView(generics.GenericAPIView):
+    serializer_class = ExperienceSerializer
+    permission_classes = [IsAuthenticated, IsJobSeeker]
+
+    def get_queryset(self):
+        return Experience.objects.filter(profile=self.request.user.job_seeker_profile)
+
+    def get_object(self, pk):
+        return get_object_or_404(
+            Experience, pk=pk, profile=self.request.user.job_seeker_profile
+        )
+
+    @extend_schema(
+        responses={200: ExperienceSerializer(many=True)},
+    )
+    def get(self, request):
+        return Response(
+            {
+                "message": "Experience fetched successfully",
+                "data": ExperienceSerializer(self.get_queryset(), many=True).data,
+            }
+        )
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(profile=request.user.job_seeker_profile)
+        return Response(
+            {
+                "message": "Experience created successfully",
+                "data": serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+    def delete(self, request, pk):
+        experience = self.get_object(pk)
+        experience.delete()
+        return Response(
+            {"message": "Experience deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+    def put(self, request, pk):
+        experience = self.get_object(pk)
+        serializer = self.serializer_class(experience, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            {
+                "message": "Experience updated successfully",
+                "data": serializer.data,
+            },
+            status=status.HTTP_200_OK,
         )

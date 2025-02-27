@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import EducationAPIView, JobSeekerProfileAPIView
+from .views import EducationAPIView, ExperienceAPIView, JobSeekerProfileAPIView
 
 urlpatterns = [
     path(
@@ -9,13 +9,23 @@ urlpatterns = [
         name="job-seeker-profile",
     ),
     path(
-        "job-seeker-profile/education/",
+        "job-seeker-profile/educations/",
         EducationAPIView.as_view(http_method_names={"post", "get"}),
         name="education-list-create",
     ),
     path(
-        "job-seeker-profile/education/<int:pk>/",
+        "job-seeker-profile/educations/<int:pk>/",
         EducationAPIView.as_view(http_method_names={"put", "delete"}),
         name="education-update-delete",
+    ),
+    path(
+        "job-seeker-profile/experiences/",
+        ExperienceAPIView.as_view(http_method_names={"post", "get"}),
+        name="experience-list-create",
+    ),
+    path(
+        "job-seeker-profile/experiences/<int:pk>/",
+        ExperienceAPIView.as_view(http_method_names={"put", "delete"}),
+        name="experience-update-delete",
     ),
 ]
