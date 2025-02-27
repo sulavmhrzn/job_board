@@ -1,17 +1,22 @@
 from datetime import datetime
 
+from apps.accounts.serializers import UserSerializer
 from apps.profiles.models import JobSeekerProfile
-from apps.profiles.serializers import education, experience
+from apps.profiles.serializers import education, experience, social_account
 from rest_framework import serializers
 
 
 class JobSeekerProfileSerializer(serializers.ModelSerializer):
     education = education.EducationSerializer(many=True, read_only=True)
     experience = experience.ExperienceSerializer(many=True, read_only=True)
+    social_accounts = social_account.SocialAccountSerializer(many=True, read_only=True)
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = JobSeekerProfile
         fields = [
+            "id",
+            "user",
             "phone_number",
             "gender",
             "date_of_birth",
@@ -23,6 +28,7 @@ class JobSeekerProfileSerializer(serializers.ModelSerializer):
             "profile_picture",
             "education",
             "experience",
+            "social_accounts",
         ]
         extra_kwargs = {
             "created_at": {"read_only": True},

@@ -1,4 +1,4 @@
-from apps.profiles.models import Education, Experience, JobSeekerProfile
+from apps.profiles.models import Education, Experience, JobSeekerProfile, SocialAccount
 from django.contrib import admin
 
 
@@ -44,3 +44,10 @@ class ExperienceAdmin(admin.ModelAdmin):
         "profile__user__last_name",
     )
     ordering = ("profile__user__email",)
+
+
+@admin.register(SocialAccount)
+class SocialAccountAdmin(admin.ModelAdmin):
+    list_display = ("profile", "account_name", "url")
+    search_fields = ("account_name",)
+    ordering = ("account_name",)

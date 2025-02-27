@@ -79,3 +79,14 @@ class Experience(models.Model):
     class Meta:
         verbose_name_plural = "Experiences"
         verbose_name = "Experience"
+
+
+class SocialAccount(models.Model):
+    profile = models.ForeignKey(
+        JobSeekerProfile, on_delete=models.CASCADE, related_name="social_accounts"
+    )
+    account_name = models.CharField(max_length=255)
+    url = models.URLField(max_length=255)
+
+    def __str__(self):
+        return f"{self.profile.user.get_full_name()} - {self.account_name}"

@@ -1,4 +1,5 @@
-from apps.profiles.models import Education, Experience, JobSeekerProfile
+from apps.profiles.models import Education, Experience, JobSeekerProfile, SocialAccount
+from apps.profiles.serializers.social_account import SocialAccountSerializer
 from apps.utils.permissions import IsJobSeeker
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
@@ -7,6 +8,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from yaml import serialize
 
 from .serializers.education import EducationSerializer
 from .serializers.experience import ExperienceSerializer
@@ -173,6 +175,65 @@ class ExperienceAPIView(generics.GenericAPIView):
         return Response(
             {
                 "message": "Experience updated successfully",
+                "data": serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+@extend_schema(tags=[JOB_SEEKER_PROFILE])
+class SocialAccountAPIView(generics.GenericAPIView):
+    serializer_class = SocialAccountSerializer
+    permission_classes = [IsAuthenticated, IsJobSeeker]
+
+    def get_object(self, pk):
+        return get_object_or_404(
+            SocialAccount, profile=self.request.user.job_seeker_profile, pk=pk
+        )
+
+    @extend_schema(
+        responses={200: SocialAccountSerializer(many=True)},
+    )
+    def get(self, request):
+        return Response(
+            {
+                "message": "Social accounts fetched successfully",
+                "data": SocialAccountSerializer(
+                    request.user.job_seeker_profile.social_accounts, many=True
+                ).data,
+            }
+        )
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(profile=request.user.job_seeker_profile)
+        return Response(
+            {
+                "message": "Social account created successfully",
+                "data": serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+    def delete(self, request, pk):
+        social_account = self.get_object(pk)
+        social_account.delete()
+        return Response(
+            {"message": "Social account deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+    def put(self, request, pk):
+        social_account = self.get_object(pk)
+        serializer = self.serializer_class(
+            social_account, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            {
+                "message": "Social account updated successfully",
                 "data": serializer.data,
             },
             status=status.HTTP_200_OK,
