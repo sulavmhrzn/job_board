@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from apps.profiles.models import Experience
 from rest_framework import serializers
+
+from apps.profiles.models import Experience
 
 
 class ExperienceSerializer(serializers.ModelSerializer):

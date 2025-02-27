@@ -1,6 +1,3 @@
-from apps.profiles.models import Education, Experience, JobSeekerProfile, SocialAccount
-from apps.profiles.serializers.social_account import SocialAccountSerializer
-from apps.utils.permissions import IsJobSeeker
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
@@ -8,11 +5,13 @@ from rest_framework.exceptions import NotFound
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from yaml import serialize
 
-from .serializers.education import EducationSerializer
-from .serializers.experience import ExperienceSerializer
-from .serializers.job_seeker import JobSeekerProfileSerializer
+from apps.profiles.models import Education, Experience, JobSeekerProfile, SocialAccount
+from apps.profiles.serializers.education import EducationSerializer
+from apps.profiles.serializers.experience import ExperienceSerializer
+from apps.profiles.serializers.job_seeker import JobSeekerProfileSerializer
+from apps.profiles.serializers.social_account import SocialAccountSerializer
+from apps.utils.permissions import IsJobSeeker
 
 JOB_SEEKER_PROFILE = "Job Seeker Profile"
 

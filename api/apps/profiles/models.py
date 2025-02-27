@@ -1,6 +1,7 @@
-from apps.accounts.models import User
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+
+from apps.accounts.models import User
 
 
 class JobSeekerProfile(models.Model):

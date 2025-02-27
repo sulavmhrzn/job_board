@@ -16,6 +16,15 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = [
-    "ruff>=0.9.7",
+dev = ["ruff>=0.9.7"]
+
+# Import sorting config
+[tool.ruff.isort]
+known-first-party = ["apps"]
+section-order = [
+    "future",
+    "standard-library",
+    "third-party",
+    "first-party",
+    "local-folder",
 ]

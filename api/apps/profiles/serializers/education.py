@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from apps.profiles.models import Education
 from rest_framework import serializers
+
+from apps.profiles.models import Education
 
 
 class EducationSerializer(serializers.ModelSerializer):

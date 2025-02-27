@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (
+from apps.profiles.views.job_seeker import (
     EducationAPIView,
     ExperienceAPIView,
     JobSeekerProfileAPIView,

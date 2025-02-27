@@ -1,9 +1,10 @@
 from datetime import datetime
 
+from rest_framework import serializers
+
 from apps.accounts.serializers import UserSerializer
 from apps.profiles.models import JobSeekerProfile
 from apps.profiles.serializers import education, experience, social_account
-from rest_framework import serializers
 
 
 class JobSeekerProfileSerializer(serializers.ModelSerializer):

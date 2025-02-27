@@ -1,5 +1,6 @@
-from apps.profiles.models import Education, Experience, JobSeekerProfile, SocialAccount
 from django.contrib import admin
+
+from apps.profiles.models import Education, Experience, JobSeekerProfile, SocialAccount
 
 
 @admin.register(JobSeekerProfile)

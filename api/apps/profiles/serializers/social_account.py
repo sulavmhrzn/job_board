@@ -1,5 +1,6 @@
-from apps.profiles.models import SocialAccount
 from rest_framework import serializers
+
+from apps.profiles.models import SocialAccount
 
 
 class SocialAccountSerializer(serializers.ModelSerializer):
