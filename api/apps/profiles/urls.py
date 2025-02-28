@@ -1,6 +1,6 @@
 from django.urls import path
 
-from apps.profiles.views.job_seeker import (
+from apps.profiles.views import (
     EducationAPIView,
     ExperienceAPIView,
     JobSeekerProfileAPIView,
@@ -9,37 +9,37 @@ from apps.profiles.views.job_seeker import (
 
 urlpatterns = [
     path(
-        "job-seeker-profile/basic/",
+        "basic/",
         JobSeekerProfileAPIView.as_view(),
         name="job-seeker-profile",
     ),
     path(
-        "job-seeker-profile/educations/",
+        "educations/",
         EducationAPIView.as_view(http_method_names={"post", "get"}),
         name="education-list-create",
     ),
     path(
-        "job-seeker-profile/educations/<int:pk>/",
+        "educations/<int:pk>/",
         EducationAPIView.as_view(http_method_names={"put", "delete"}),
         name="education-update-delete",
     ),
     path(
-        "job-seeker-profile/experiences/",
+        "experiences/",
         ExperienceAPIView.as_view(http_method_names={"post", "get"}),
         name="experience-list-create",
     ),
     path(
-        "job-seeker-profile/experiences/<int:pk>/",
+        "experiences/<int:pk>/",
         ExperienceAPIView.as_view(http_method_names={"put", "delete"}),
         name="experience-update-delete",
     ),
     path(
-        "job-seeker-profile/social-accounts/",
+        "social-accounts/",
         SocialAccountAPIView.as_view(http_method_names={"post", "get"}),
         name="social-accounts",
     ),
     path(
-        "job-seeker-profile/social-accounts/<int:pk>/",
+        "social-accounts/<int:pk>/",
         SocialAccountAPIView.as_view(http_method_names={"put", "delete"}),
         name="social-account-update-delete",
     ),

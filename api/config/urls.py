@@ -8,7 +8,7 @@ urlpatterns = [
     path("api/token/create/", TokenObtainPairView.as_view(), name="token_create"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/accounts/", include("apps.accounts.urls")),
-    path("api/profiles/", include("apps.profiles.urls")),
+    path("api/profiles/job-seeker-profile/", include("apps.profiles.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "api/docs/",
