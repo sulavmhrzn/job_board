@@ -42,6 +42,7 @@ LOCAL_APPS = [
     "apps.accounts",
     "apps.profiles",
     "apps.employers",
+    "apps.jobs",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -145,6 +146,9 @@ SPECTACULAR_SETTINGS = {
         "deepLinking": True,
         "persistAuthorization": True,
         "displayOperationId": True,
+    },
+    "ENUM_NAME_OVERRIDES": {
+        "JobLevelEnum": "apps.jobs.models.Job.LEVEL",
     },
 }
 
