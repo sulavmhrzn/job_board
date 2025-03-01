@@ -6,6 +6,10 @@ from apps.employers.models import EmployerProfile
 
 
 class Job(models.Model):
+    class STATUS(models.TextChoices):
+        ACTIVE = "ACTIVE", "Active"
+        DRAFT = "DRAFT", "Draft"
+
     class LEVEL(models.TextChoices):
         ENTRY = "ENTRY", "Entry"
         MID = "MID", "Mid"
@@ -55,8 +59,17 @@ class Job(models.Model):
     description = models.TextField()
     deadline = models.DateField(blank=True, null=True)
     hide_salary = models.BooleanField(default=False)
+    status = models.CharField(
+        max_length=20, choices=STATUS.choices, default=STATUS.ACTIVE
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def is_active(self):
+        return self.status == self.STATUS.ACTIVE
+
+    def is_draft(self):
+        return self.status == self.STATUS.DRAFT
 
     def __str__(self):
         return self.position

@@ -6,14 +6,16 @@ from rest_framework.response import Response
 
 from apps.jobs.models import Job
 from apps.jobs.serializers import JobSerializer
+from apps.utils.paginations import JobsResultSetPagination
 from apps.utils.permissions import IsJobProvider
 
 
 @extend_schema(tags=["Jobs"])
 class JobListCreateAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated, IsJobProvider]
-    queryset = Job.objects.all()
+    queryset = Job.objects.filter(status=Job.STATUS.ACTIVE)
     serializer_class = JobSerializer
+    pagination_class = JobsResultSetPagination
 
     def get_permissions(self):
         if self.request.method == "GET":
@@ -22,10 +24,9 @@ class JobListCreateAPIView(generics.GenericAPIView):
 
     @extend_schema(responses={200: JobSerializer(many=True)})
     def get(self, request):
-        serializer = self.serializer_class(self.get_queryset(), many=True)
-        return Response(
-            {"message": "Jobs fetched successfully", "data": serializer.data}
-        )
+        page = self.paginate_queryset(self.get_queryset())
+        serializer = self.serializer_class(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -47,7 +48,13 @@ class JobRetrieveUpdateDeleteAPIView(generics.GenericAPIView):
         return super().get_permissions()
 
     def get(self, request, pk):
-        job = get_object_or_404(Job, pk=pk)
+        # If user is authenticated and is job provider,
+        # then they can view their own job regardless of status
+        # Otherwise, only active jobs can be viewed
+        if request.user.is_authenticated and request.user.is_job_provider():
+            job = get_object_or_404(Job, pk=pk, employer=request.user.employer_profile)
+        else:
+            job = get_object_or_404(Job, pk=pk, status=Job.STATUS.ACTIVE)
         serializer = self.serializer_class(job)
         return Response(
             {"message": "Job fetched successfully", "data": serializer.data}

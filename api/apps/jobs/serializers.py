@@ -46,6 +46,7 @@ class JobSerializer(serializers.ModelSerializer):
             "description",
             "hide_salary",
             "deadline",
+            "status",
             "created_at",
             "updated_at",
         )
