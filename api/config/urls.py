@@ -11,6 +11,7 @@ urlpatterns = [
     path("api/profiles/job-seeker-profile/", include("apps.profiles.urls")),
     path("api/profiles/employer-profile/", include("apps.employers.urls")),
     path("api/jobs/", include("apps.jobs.urls")),
+    path("api/job-applications/", include("apps.job_applications.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "api/docs/",

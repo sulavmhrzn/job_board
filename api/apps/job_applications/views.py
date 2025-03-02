@@ -18,7 +18,7 @@ class JobApplicationAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated, IsJobSeeker]
 
     def post(self, request, pk):
-        job = get_object_or_404(Job, pk=pk)
+        job = get_object_or_404(Job, pk=pk, status=Job.STATUS.ACTIVE)
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         job_application = serializer.save(
@@ -30,4 +30,17 @@ class JobApplicationAPIView(generics.GenericAPIView):
                 "data": self.serializer_class(job_application).data,
             },
             status=status.HTTP_201_CREATED,
+        )
+
+    @extend_schema(responses={200: JobApplicationSerializer(many=True)})
+    def get(self, request):
+        job_applications = JobApplication.objects.filter(
+            applicant=request.user.job_seeker_profile
+        )
+        serializer = self.serializer_class(job_applications, many=True)
+        return Response(
+            {
+                "message": "Job applications fetched successfully",
+                "data": serializer.data,
+            }
         )

@@ -16,5 +16,9 @@ urlpatterns = [
         ),
         name="job-retrieve-update-delete",
     ),
-    path("<int:pk>/apply/", JobApplicationAPIView.as_view(), name="job-apply"),
+    path(
+        "<int:pk>/apply/",
+        JobApplicationAPIView.as_view(http_method_names=["post"]),
+        name="job-apply",
+    ),
 ]
