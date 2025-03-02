@@ -1,5 +1,6 @@
 from django.urls import path
 
+from apps.job_applications.views import JobApplicationAPIView
 from apps.jobs.views import JobListCreateAPIView, JobRetrieveUpdateDeleteAPIView
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
         ),
         name="job-retrieve-update-delete",
     ),
+    path("<int:pk>/apply/", JobApplicationAPIView.as_view(), name="job-apply"),
 ]
