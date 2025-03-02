@@ -151,6 +151,7 @@ SPECTACULAR_SETTINGS = {
     },
     "ENUM_NAME_OVERRIDES": {
         "JobLevelEnum": "apps.jobs.models.Job.LEVEL",
+        "JobApplicationStatusEnum": "apps.job_applications.models.JobApplication.STATUS",
     },
 }
 

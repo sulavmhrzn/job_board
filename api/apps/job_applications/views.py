@@ -6,9 +6,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.job_applications.models import JobApplication
-from apps.job_applications.serializers import JobApplicationSerializer
+from apps.job_applications.serializers import (
+    JobApplicationSerializer,
+    UpdateJobApplicationSerializer,
+)
 from apps.jobs.models import Job
-from apps.utils.permissions import IsJobSeeker
+from apps.utils.permissions import IsJobProvider, IsJobSeeker
 
 
 @extend_schema(tags=["Job Applications"])
@@ -44,3 +47,49 @@ class JobApplicationAPIView(generics.GenericAPIView):
                 "data": serializer.data,
             }
         )
+
+
+@extend_schema(tags=["Job Applications"])
+class JobProviderApplicationsAPIView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated, IsJobProvider]
+    serializer_class = JobApplicationSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == "PATCH":
+            return UpdateJobApplicationSerializer
+        return super().get_serializer_class()
+
+    def get(self, request):
+        applications = JobApplication.objects.filter(
+            job__employer=request.user.employer_profile
+        )
+        serializer = self.serializer_class(applications, many=True)
+        return Response(
+            {
+                "message": "Job applications fetched successfully",
+                "data": serializer.data,
+            }
+        )
+
+    def patch(self, request, pk):
+        application = get_object_or_404(
+            JobApplication, pk=pk, job__employer=request.user.employer_profile
+        )
+        serializer = self.get_serializer(
+            instance=application, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        application = serializer.save()
+        return Response(
+            {
+                "message": "Job application updated successfully",
+                "data": self.serializer_class(application).data,
+            }
+        )
+
+    def delete(self, request, pk):
+        application = get_object_or_404(
+            JobApplication, pk=pk, job__employer=request.user.employer_profile
+        )
+        application.delete()
+        return Response({"message": "Job application deleted successfully"})

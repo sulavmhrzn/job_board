@@ -90,3 +90,9 @@ class JobApplicationSerializer(serializers.ModelSerializer):
         ).exists():
             raise serializers.ValidationError("You have already applied for this job.")
         return super().create(validated_data)
+
+
+class UpdateJobApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobApplication
+        fields = ["status"]
