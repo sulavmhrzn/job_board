@@ -1,11 +1,13 @@
 from django.shortcuts import get_object_or_404
+from django_filters import rest_framework as filters
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from apps.jobs.models import Job
-from apps.jobs.serializers import JobSerializer
+from apps.jobs.serializers import JobListSerializer, JobSerializer
+from apps.utils.filters import JobFilter
 from apps.utils.paginations import JobsResultSetPagination
 from apps.utils.permissions import IsJobProvider
 
@@ -16,16 +18,23 @@ class JobListCreateAPIView(generics.GenericAPIView):
     queryset = Job.objects.filter(status=Job.STATUS.ACTIVE)
     serializer_class = JobSerializer
     pagination_class = JobsResultSetPagination
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = JobFilter
 
     def get_permissions(self):
         if self.request.method == "GET":
             return [AllowAny()]
         return super().get_permissions()
 
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return JobListSerializer
+        return super().get_serializer_class()
+
     @extend_schema(responses={200: JobSerializer(many=True)})
     def get(self, request):
-        page = self.paginate_queryset(self.get_queryset())
-        serializer = self.serializer_class(page, many=True)
+        page = self.paginate_queryset(self.filter_queryset(self.get_queryset()))
+        serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
 
     def post(self, request):

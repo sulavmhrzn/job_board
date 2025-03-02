@@ -47,6 +47,7 @@ class JobSerializer(serializers.ModelSerializer):
             "hide_salary",
             "deadline",
             "status",
+            "deadline",
             "created_at",
             "updated_at",
         )
@@ -88,3 +89,42 @@ class JobSerializer(serializers.ModelSerializer):
             data.pop("minimum_salary")
             data.pop("maximum_salary")
         return data
+
+
+class JobListSerializer(serializers.ModelSerializer):
+    company = serializers.SerializerMethodField()
+
+    @extend_schema_field(
+        {
+            "type": "object",
+            "properties": {
+                "id": {"type": "integer"},
+                "company_name": {"type": "string"},
+                "company_logo": {"type": "string"},
+                "email": {"type": "string"},
+            },
+        }
+    )
+    def get_company(self, obj):
+        return {
+            "id": obj.employer.id,
+            "company_name": obj.employer.company_name,
+            "comapny_logo": obj.employer.company_logo.url,
+            "email": obj.employer.company_email,
+        }
+
+    class Meta:
+        model = Job
+        fields = (
+            "id",
+            "company",
+            "position",
+            "no_of_employee",
+            "category",
+            "level",
+            "job_type",
+            "location",
+            "deadline",
+            "created_at",
+            "updated_at",
+        )
