@@ -28,3 +28,14 @@ def send_job_application_update_email(sender, instance, **kwargs):
             recipient_list=[instance.applicant.user.email],
             fail_silently=False,
         )
+
+
+@receiver(post_save, sender=JobApplication)
+def create_status_history(sender, instance, **kwargs):
+    if kwargs.get("created"):
+        return
+
+    if instance.status != instance._old_status:
+        instance.status_histories.create(
+            previous_status=instance._old_status, new_status=instance.status
+        )

@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from apps.job_applications.models import JobApplication
+from apps.job_applications.models import JobApplication, StatusHistory
 
 
 class JobApplicationSerializer(serializers.ModelSerializer):
@@ -96,3 +96,14 @@ class UpdateJobApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobApplication
         fields = ["status"]
+
+
+class StatusHistorySerialzier(serializers.ModelSerializer):
+    position = serializers.SerializerMethodField()
+
+    def get_position(self, obj):
+        return obj.application.job.position
+
+    class Meta:
+        model = StatusHistory
+        fields = ["position", "previous_status", "new_status", "updated_at"]

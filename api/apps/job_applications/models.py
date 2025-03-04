@@ -1,3 +1,5 @@
+from tabnanny import verbose
+
 from django.db import models
 
 from apps.jobs.models import Job
@@ -28,3 +30,28 @@ class JobApplication(models.Model):
 
     def __str__(self):
         return f"{self.applicant.user.email} - {self.job.position}"
+
+
+class StatusHistory(models.Model):
+    application = models.ForeignKey(
+        JobApplication, on_delete=models.CASCADE, related_name="status_histories"
+    )
+    previous_status = models.CharField(
+        max_length=20,
+        choices=JobApplication.STATUS.choices,
+        default=JobApplication.STATUS.PENDING,
+    )
+    new_status = models.CharField(
+        max_length=20,
+        choices=JobApplication.STATUS.choices,
+        default=JobApplication.STATUS.PENDING,
+    )
+    additional_comments = models.TextField(blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.application.applicant.user.email} - {self.application.job.position} - {self.previous_status} to {self.new_status}"
+
+    class Meta:
+        ordering = ["-updated_at"]
+        verbose_name_plural = "Status Histories"
